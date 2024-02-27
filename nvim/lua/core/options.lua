@@ -19,6 +19,7 @@ local options = {
 
     -- Cursor options
     cursorline = true,                          -- Highlight the current line
+    guicursor = "",
 
     -- Fold options
     foldcolumn = "0",                           -- Disable the fold column
@@ -37,7 +38,7 @@ local options = {
     scrolloff = 8,                              -- Minimum number of lines to keep above/below the cursor
 
     -- Search options
-    hlsearch = true,                            -- Highlight search matches
+    hlsearch = false,                            -- Highlight search matches
     ignorecase = true,                          -- Ignore case in search patterns
     incsearch = true,                           -- Perform incremental search for faster navigation
     smartcase = true,                           -- Use case-sensitive search if any capital letters are used
