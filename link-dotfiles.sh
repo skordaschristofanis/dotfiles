@@ -229,19 +229,6 @@ main() {
         fi
     done < <(find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
 
-    # Link autostart desktop entries from */autostart/*.desktop
-    local autostart_dir="$CONFIG_DIR/autostart"
-    mkdir -p "$autostart_dir"
-    while IFS= read -r -d '' desktop_file; do
-        local desktop_name
-        desktop_name="$(basename "$desktop_file")"
-        if create_symlink "$desktop_file" "$autostart_dir/$desktop_name" "autostart/$desktop_name"; then
-            linked_count=$((linked_count + 1))
-        else
-            skipped_count=$((skipped_count + 1))
-        fi
-    done < <(find "$SCRIPT_DIR" -path '*/autostart/*.desktop' -print0)
-
     # Link home-level dotfiles from link-dotfiles.home
     for link_spec in "${HOME_LINKS[@]}"; do
         local source_rel="${link_spec%%:*}"

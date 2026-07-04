@@ -11,11 +11,6 @@ export XCURSOR_SIZE=24
 # Apply display layout before the window manager starts
 "${XDG_CONFIG_HOME:-$HOME/.config}/display/apply_monitors.sh"
 
-# Launch ~/.config/autostart/*.desktop entries
-if command -v dex-autostart >/dev/null 2>&1; then
-  dex-autostart &
-else
-  echo "dex-autostart not found; install the dex package for autostart support" >&2
-fi
+# Startup apps
 
 exec dwm
