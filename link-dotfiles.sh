@@ -26,6 +26,7 @@ VERBOSE=false
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config"
+SKIP_FILE="$SCRIPT_DIR/link-dotfiles.skip"
 
 # Help message
 show_help() {
@@ -95,6 +96,29 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
+# Load directory skip list from link-dotfiles.skip
+load_skip_dirs() {
+    SKIP_DIRS=()
+    [[ -f "$SKIP_FILE" ]] || return 0
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line%%#*}"
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+        [[ -z "$line" ]] && continue
+        SKIP_DIRS+=("$line")
+    done < "$SKIP_FILE"
+}
+
+should_skip_dir() {
+    local folder_name="$1"
+    local skip_dir
+    for skip_dir in "${SKIP_DIRS[@]}"; do
+        [[ "$folder_name" == "$skip_dir" ]] && return 0
+    done
+    return 1
+}
+
 # Check if config directory exists, create if not
 if [[ ! -d "$CONFIG_DIR" ]]; then
     log_info "Creating $CONFIG_DIR"
@@ -151,6 +175,8 @@ create_symlink() {
 
 # Main function
 main() {
+    load_skip_dirs
+
     echo -e "${BLUE}Linking dotfiles from $SCRIPT_DIR to $CONFIG_DIR${NC}"
     echo ""
     
@@ -167,6 +193,12 @@ main() {
         # Skip .git directory and hidden directories starting with .
         if [[ "$folder_name" == .* ]]; then
             log_info "Skipping hidden directory: $folder_name"
+            continue
+        fi
+
+        # Skip source forks and other non-config directories
+        if should_skip_dir "$folder_name"; then
+            log_info "Skipping non-config directory: $folder_name"
             continue
         fi
         
