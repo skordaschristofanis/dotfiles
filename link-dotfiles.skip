@@ -2,3 +2,5 @@
 # One name per line. Lines starting with # are comments.
 
 dwm
+autostart
+session

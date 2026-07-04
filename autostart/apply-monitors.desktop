@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Apply monitor layout
+Comment=Apply xrandr / display profile at session start
+Exec=bash -c '"${XDG_CONFIG_HOME:-$HOME/.config}/display/apply_monitors.sh"'
+Terminal=false
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,4 @@
+# Home-level dotfiles to symlink into $HOME.
+# Format: repo/relative/path:home/relative/path
+
+session/xinitrc:.xinitrc

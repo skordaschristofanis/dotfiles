@@ -27,6 +27,7 @@ VERBOSE=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config"
 SKIP_FILE="$SCRIPT_DIR/link-dotfiles.skip"
+HOME_FILE="$SCRIPT_DIR/link-dotfiles.home"
 
 # Help message
 show_help() {
@@ -34,6 +35,7 @@ show_help() {
 Usage: $0 [OPTIONS]
 
 Symlink all folders from the dotfiles repository into ~/.config/
+and home-level dotfiles listed in link-dotfiles.home into ~/
 
 OPTIONS:
     -f, --force     Force overwrite existing files/directories
@@ -119,6 +121,20 @@ should_skip_dir() {
     return 1
 }
 
+# Load home-level dotfile links from link-dotfiles.home
+load_home_links() {
+    HOME_LINKS=()
+    [[ -f "$HOME_FILE" ]] || return 0
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line%%#*}"
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+        [[ -z "$line" ]] && continue
+        HOME_LINKS+=("$line")
+    done < "$HOME_FILE"
+}
+
 # Check if config directory exists, create if not
 if [[ ! -d "$CONFIG_DIR" ]]; then
     log_info "Creating $CONFIG_DIR"
@@ -176,8 +192,9 @@ create_symlink() {
 # Main function
 main() {
     load_skip_dirs
+    load_home_links
 
-    echo -e "${BLUE}Linking dotfiles from $SCRIPT_DIR to $CONFIG_DIR${NC}"
+    echo -e "${BLUE}Linking dotfiles from $SCRIPT_DIR to $CONFIG_DIR and $HOME${NC}"
     echo ""
     
     local linked_count=0
@@ -206,12 +223,46 @@ main() {
         local target="$CONFIG_DIR/$folder_name"
         
         if create_symlink "$source" "$target" "$folder_name"; then
-            ((linked_count++))
+            linked_count=$((linked_count + 1))
         else
-            ((skipped_count++))
+            skipped_count=$((skipped_count + 1))
         fi
     done < <(find "$SCRIPT_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
-    
+
+    # Link autostart desktop entries from */autostart/*.desktop
+    local autostart_dir="$CONFIG_DIR/autostart"
+    mkdir -p "$autostart_dir"
+    while IFS= read -r -d '' desktop_file; do
+        local desktop_name
+        desktop_name="$(basename "$desktop_file")"
+        if create_symlink "$desktop_file" "$autostart_dir/$desktop_name" "autostart/$desktop_name"; then
+            linked_count=$((linked_count + 1))
+        else
+            skipped_count=$((skipped_count + 1))
+        fi
+    done < <(find "$SCRIPT_DIR" -path '*/autostart/*.desktop' -print0)
+
+    # Link home-level dotfiles from link-dotfiles.home
+    for link_spec in "${HOME_LINKS[@]}"; do
+        local source_rel="${link_spec%%:*}"
+        local target_rel="${link_spec#*:}"
+        local source="$SCRIPT_DIR/$source_rel"
+        local target="$HOME/$target_rel"
+        local link_name="home/$target_rel"
+
+        if [[ ! -e "$source" ]]; then
+            log_error "Home link source not found: $source"
+            error_count=$((error_count + 1))
+            continue
+        fi
+
+        if create_symlink "$source" "$target" "$link_name"; then
+            linked_count=$((linked_count + 1))
+        else
+            skipped_count=$((skipped_count + 1))
+        fi
+    done
+
     echo ""
     echo -e "${GREEN}Summary:${NC}"
     echo -e "  ${GREEN}Linked:${NC}   $linked_count"
