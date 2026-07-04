@@ -1,0 +1,2 @@
+! Cursor only — do not set Xft.dpi here (affects font scaling globally)
+Xcursor.size: 24
