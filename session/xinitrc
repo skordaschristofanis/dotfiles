@@ -12,5 +12,7 @@ export XCURSOR_SIZE=24
 "${XDG_CONFIG_HOME:-$HOME/.config}/display/apply_monitors.sh"
 
 # Startup apps
+/usr/bin/Discord &
+/usr/bin/1password &
 
 exec dwm
