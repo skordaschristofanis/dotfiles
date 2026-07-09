@@ -22,6 +22,7 @@
                     allowUnfree = true;
                     allowUnfreePredicate = _: true;
                 };
+            };
         # Determinate Nix manages its own daemon and nix.conf. Disable nix-darwin's nix management to avoid conflicts.
         nix.enable = false;
 

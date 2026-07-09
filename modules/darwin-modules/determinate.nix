@@ -6,7 +6,7 @@
         cfg = config.modules.determinate;
     in
     {
-        imports = { inputs.determinate.darwinModules.default };
+        imports = [ inputs.determinate.darwinModules.default ];
         options.modules.determinate = {
             enable = lib.mkEnableOption "Determinate Nix integration for Darwin" // {
                 default = true;
@@ -35,5 +35,5 @@
                 };
             };
         };
-    }
+    };
 }
