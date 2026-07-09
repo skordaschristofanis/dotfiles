@@ -7,7 +7,7 @@
         nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
         # Flakes
-        flake-parts.url = "github:hercules-ci/flakes-parts";
+        flake-parts.url = "github:hercules-ci/flake-parts";
         import-tree.url = "github:denful/import-tree";
 
         # Home manager
@@ -30,8 +30,7 @@
         };
     };
 
-    outputs = {
-        inputs@{ flake-parts, import-tree, ... }:
+    outputs = inputs@{ flake-parts, import-tree, ... }:
         flake-parts.lib.mkFlake { inherit inputs; } {
             imports = [ (import-tree ./modules) ];
 
@@ -40,5 +39,4 @@
                 "x86_64-linux"
             ];
         };
-    };
 }
