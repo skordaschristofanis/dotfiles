@@ -37,6 +37,15 @@ mkdir myapp
 
 The script will automatically detect and link the new folder to `~/.config/myapp`.
 
+### NixOS darwin
+```bash
+curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+```
+
+```bash
+nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake .#vortex
+```
+
 ## Usage
 
 ### Basic Linking

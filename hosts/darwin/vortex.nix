@@ -2,6 +2,7 @@
 { inputs, pkgs, ... }:
 
 {
-    modules = {};
+    system.primaryUser = builtins.getEnv "USER";
+    system.stateVersion = 7;
     environment.darwinConfig = "$HOME/Repos/dotfiles/hosts/darwin/vortex.nix";
 }

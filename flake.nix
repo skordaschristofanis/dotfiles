@@ -2,27 +2,27 @@
     description = "Nix config";
 
     inputs = {
-        # Nixpkgs
+    # Nixpkgs
         nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
         nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-        # Flakes
+    # Flakes
         flake-parts.url = "github:hercules-ci/flake-parts";
-        import-tree.url = "github:denful/import-tree";
+        determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
 
-        # Home manager
+    # Home manager
         home-manager = {
             url = "github:nix-community/home-manager/release-26.05";
             inputs.nixpkgs.follows = "nixpkgs";
         };
 
-        # MacOS
+    # MacOS
         nix-darwin = {
-            url = "github:nix-darwin/nix-darwin";
+            url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
             inputs.nixpkgs.follows = "nixpkgs";
         };
 
-        # General
+    # General
         hardware.url = "github:nixos/nixos-hardware";
         nix-index-database = {
             url = "github:nix-community/nix-index-database";
@@ -30,13 +30,16 @@
         };
     };
 
-    outputs = inputs@{ flake-parts, import-tree, ... }:
+    outputs = inputs@{ flake-parts, ... }:
         flake-parts.lib.mkFlake { inherit inputs; } {
-            imports = [ (import-tree ./modules) ];
+            imports = [
+                ./modules/wiring/hosts.nix
+            ];
 
             systems = [
                 "aarch64-darwin"
-                "x86_64-linux"
+                    "x86_64-linux"
             ];
         };
 }
+

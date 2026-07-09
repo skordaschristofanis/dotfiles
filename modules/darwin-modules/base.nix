@@ -1,37 +1,34 @@
-{ ... }: 
+{ config, lib, pkgs, inputs, outputs, pkgs-unstable, ... }:
+let
+cfg = config.modules.base;
+finderDownloadsPath = "file://localhost/Users/${config.system.primaryUser}/Downloads/";
+in
 {
-    flake.darwinModules.base = { config, lib, pkgs, inputs, outputs, pkgs-unstable, ... }:
-    let
-        cfg = config.modules.base;
-        finderDownloadsPath = "file://localhost/Users/${config.system.primaryUser}/Downloads/";
-    in
-    {
-        imports = [ inputs.opnix.darwinModules.default ];
-        
-        options.modules.base = {
-            enable = lib.mkEnableOption "base darwin configuration" // {
-                default = true;
+    imports = [ ];
+
+    options.modules.base = {
+        enable = lib.mkEnableOption "base darwin configuration" // {
+            default = true;
+    };
+    };
+
+    config = lib.mkIf cfg.enable {
+        ids.gids.nixbld = 30000;
+
+        nixpkgs = {
+            config = {
+                allowUnfree = true;
+                allowUnfreePredicate = _: true;
             };
         };
 
-        config = lib.mkIf cfg.enable {
-            ids.gids.nixbld = 30000;
-
-            nixpkgs = {
-                config = {
-                    allowUnfree = true;
-                    allowUnfreePredicate = _: true;
-                };
-            };
-        # Determinate Nix manages its own daemon and nix.conf. Disable nix-darwin's nix management to avoid conflicts.
         nix.enable = false;
 
         environment = {
             systemPackages = [
                 pkgs.coreutils
-                pkgs.neovim
-                pkgs.home-manager
-                inputs.opnix.packages.${pkgs.stdenv.hostPlatform.system}.default
+                    pkgs.neovim
+                    pkgs.home-manager
             ];
             shells = [
                 pkgs.bashInteractive
@@ -45,8 +42,8 @@
 
         fonts.packages = [
             pkgs.monaspace
-            pkgs.nerd-fonts.monaspace
-            pkgs.nerd-fonts.symbols-only
+                pkgs.nerd-fonts.monaspace
+                pkgs.nerd-fonts.symbols-only
         ];
 
         system.keyboard = {
@@ -126,6 +123,6 @@
         security.sudo.extraConfig = ''
             Defaults timestamp_timeout=30
             '';
-        };
     };
 }
+
