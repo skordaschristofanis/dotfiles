@@ -8,7 +8,7 @@ Personal system configuration managed with Nix flakes (NixOS + nix-darwin) and h
 dotfiles/
 ├── config/              # App configs (git submodules), linked via home-manager
 │   └── nvim/            # → ~/.config/nvim
-├── hosts/               # Per-machine settings (username, modules, hardware)
+├── hosts/               # Per-machine settings (modules, hardware)
 ├── modules/             # Shared NixOS/darwin/home-manager modules
 └── secrets/             # Example templates for ~/.secrets/nix/
 ```
@@ -32,7 +32,7 @@ git submodule update --init --recursive
 
 ### Secrets
 
-Each host has a secrets file at `~/.secrets/nix/<hostname>.nix` (outside the repo) for **sensitive identity only** — git name/email and SSH key paths. Username and which apps/modules are enabled live in each host file under `hosts/`.
+Each host has a secrets file at `~/.secrets/nix/<hostname>.nix` (outside the repo) for **identity** — username, git name/email, and SSH key paths. Which apps/modules are enabled live in each host file under `hosts/`.
 
 ```bash
 mkdir -p ~/.secrets/nix

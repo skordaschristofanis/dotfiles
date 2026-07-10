@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, secrets, ... }:
 let
   cfg = config.modules.gaming;
 in
@@ -11,7 +11,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.sessionVariables = {
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${config.host.username}/.steam/root/compatibilitytools.d";
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${secrets.username}/.steam/root/compatibilitytools.d";
     };
 
     programs.gamemode.enable = true;

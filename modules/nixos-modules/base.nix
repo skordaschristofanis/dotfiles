@@ -1,7 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, secrets, ... }:
 let
   cfg = config.modules.base;
-  user = config.host.username;
+  user = secrets.username;
 in
 {
   options.modules.base = {

@@ -2,8 +2,8 @@
 let
   cfg = config.modules.home-manager;
   host = {
-    username = config.host.username;
-    homeDirectory = "/home/${config.host.username}";
+    username = secrets.username;
+    homeDirectory = "/home/${secrets.username}";
   };
   profile = import ../home-modules/${config.host.profile}.nix { inherit secrets host dotfiles; };
 in

@@ -7,8 +7,6 @@
   networking.hostName = "hellios";
   system.stateVersion = "26.05";
 
-  host.username = "chris";
-
   modules.base.enable = true;
   modules.desktop.enable = true;
   modules.gaming.enable = true;
