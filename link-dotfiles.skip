@@ -1,5 +1,0 @@
-# Top-level directories to exclude from ~/.config symlinking.
-# One name per line. Lines starting with # are comments.
-
-dwm
-session
