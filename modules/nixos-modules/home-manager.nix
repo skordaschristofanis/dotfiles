@@ -5,7 +5,7 @@ let
     username = secrets.username;
     homeDirectory = "/home/${secrets.username}";
   };
-  profile = import ../home-modules/${config.host.profile}.nix { inherit secrets host dotfiles; };
+  profile = import ../home-modules/${config.host.profile}.nix { inherit secrets host; };
 in
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];

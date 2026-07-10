@@ -1,10 +1,11 @@
-{ dotfiles, configs }:
-{ lib, config, ... }:
-let
-  dotfilesPath = toString dotfiles;
-in
+{ configs }:
+{ lib, ... }:
+
 {
-  xdg.configFile = lib.genAttrs configs (name: {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfilesPath}/config/${name}";
-  });
+  home.file = lib.foldl' (acc: name: acc // {
+    ".config/${name}" = {
+      source = ../../../config/${name};
+      recursive = true;
+    };
+  }) { } configs;
 }

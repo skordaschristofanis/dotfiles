@@ -1,4 +1,4 @@
-{ secrets, host, dotfiles }:
+{ secrets, host }:
 { config, pkgs, ... }:
 
 {
