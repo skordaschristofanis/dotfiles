@@ -11,5 +11,21 @@
   modules.base.enable = true;
   modules.determinate.enable = true;
   modules.home-manager.enable = true;
+
+    modules.homebrew = {
+    enable = true;
+
+    brews = [
+      "wget"
+      "ripgrep"
+    ];
+
+    casks = [
+      "firefox"
+    ];
+
+    masApps = {
+    };
+  };
 }
 
