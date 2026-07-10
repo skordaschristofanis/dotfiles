@@ -13,6 +13,7 @@
   home.packages = with pkgs; [
     claude-code
     firefox
+    proton-vpn
   ];
 
   programs.zsh = {
