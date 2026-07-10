@@ -13,7 +13,7 @@ dotfiles/
 └── secrets/             # Example templates for ~/.secrets/nix/
 ```
 
-Configs in `config/` are symlinked into `~/.config/` by home-manager. Each host profile (`modules/home-modules/<host>.nix`) chooses which configs to link.
+Configs in `config/` are symlinked into `~/.config/` by home-manager (`config/nvim` → `~/.config/nvim`). Each host profile (`modules/home-modules/<host>.nix`) chooses which configs to link.
 
 ## Setup
 
