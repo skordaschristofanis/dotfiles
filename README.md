@@ -1,93 +1,83 @@
 # Dotfiles
 
-This repository contains my personal dotfiles configuration. All configuration folders are symlinked into `~/.config/` for easy management and version control.
+Personal system configuration managed with Nix flakes (NixOS + nix-darwin) and home-manager.
 
 ## Structure
 
-Each folder in this repository represents a configuration directory that will be symlinked into `~/.config/`. For example:
+```
+dotfiles/
+├── config/              # App configs (git submodules), linked via home-manager
+│   └── nvim/            # → ~/.config/nvim
+├── hosts/               # Per-machine settings (username, modules, hardware)
+├── modules/             # Shared NixOS/darwin/home-manager modules
+└── secrets/             # Example templates for ~/.secrets/nix/
+```
 
-- `waybar/` → `~/.config/waybar`
-- `hyprland/` → `~/.config/hyprland`
-- `nvim/` → `~/.config/nvim`
+Configs in `config/` are symlinked into `~/.config/` by home-manager. Each host profile (`modules/home-modules/<host>.nix`) chooses which configs to link.
 
 ## Setup
 
-### Initial Setup
+### Clone with submodules
 
-1. Clone this repository:
+```bash
+git clone --recurse-submodules git@github.com:skordaschristofanis/dotfiles.git ~/repos/dotfiles
+cd ~/repos/dotfiles
+```
+
+If already cloned without submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
+### Secrets
+
+Each host has a secrets file at `~/.secrets/nix/<hostname>.nix` (outside the repo) for **sensitive identity only** — git name/email and SSH key paths. Username and which apps/modules are enabled live in each host file under `hosts/`.
+
+```bash
+mkdir -p ~/.secrets/nix
+cp secrets/hellios.nix.example ~/.secrets/nix/hellios.nix   # NixOS (home)
+cp secrets/vortex.nix.example ~/.secrets/nix/vortex.nix     # macOS (work)
+```
+
+Only the `.example` templates in `secrets/` are committed. `nix flake check --impure` is required so Nix can read secrets from your home directory.
+
+### NixOS (hellios)
+
+1. Create secrets (see above).
+
+2. Verify and apply:
    ```bash
-   git clone https://github.com/skordaschristofanis/dotfiles.git ~/repos/dotfiles
-   cd ~/repos/dotfiles
+   nix flake check --impure
+   sudo nixos-rebuild switch --flake ~/repos/dotfiles#hellios
    ```
 
-2. Run the linking script:
+### macOS (vortex)
+
+1. Create secrets (see above).
+
+2. Install Nix and apply (use `sudo -H` if needed):
    ```bash
-   ./link-dotfiles.sh
+   curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+   nix flake check --impure ~/Repos/dotfiles
+   nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ~/Repos/dotfiles#vortex
    ```
 
-### Adding New Configurations
+   On subsequent rebuilds, `darwin-rebuild switch --flake ~/Repos/dotfiles#vortex` works once nix-darwin is installed.
 
-Simply add a new folder to this repository and run the linking script again:
+## Adding a config
 
-```bash
-mkdir myapp
-# Add your configuration files to myapp/
-./link-dotfiles.sh
-```
+1. Add a submodule (or directory) under `config/`:
+   ```bash
+   git submodule add git@github.com:you/repo.git config/myapp
+   ```
 
-The script will automatically detect and link the new folder to `~/.config/myapp`.
+2. Link it in the relevant home profile (`modules/home-modules/hellios.nix`, etc.):
+   ```nix
+   (import ./lib/link-configs.nix {
+     inherit dotfiles;
+     configs = [ "nvim" "myapp" ];
+   })
+   ```
 
-### NixOS darwin
-```bash
-curl -fsSL https://install.determinate.systems/nix | sh -s -- install
-```
-
-```bash
-nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake .#vortex
-```
-
-## Usage
-
-### Basic Linking
-
-Link all folders (skips existing files/links):
-```bash
-./link-dotfiles.sh
-```
-
-### Options
-
-- **Force overwrite**: Overwrite existing files or symlinks
-  ```bash
-  ./link-dotfiles.sh --force
-  ```
-
-- **Backup existing**: Backup existing files before linking
-  ```bash
-  ./link-dotfiles.sh --backup
-  ```
-
-- **Verbose output**: Show detailed information about each operation
-  ```bash
-  ./link-dotfiles.sh --verbose
-  ```
-
-- **Help**: Show usage information
-  ```bash
-  ./link-dotfiles.sh --help
-  ```
-
-## How It Works
-
-The `link-dotfiles.sh` script:
-
-1. Scans the repository for all directories
-2. Skips hidden directories (starting with `.`)
-3. Creates symlinks from `~/.config/<folder>` to the repository folders
-4. Handles existing files/links based on the options provided
-
-## Notes
-
-- Hidden directories (starting with `.`) are automatically skipped
-- The script will not overwrite existing files unless you use `--force` or `--backup`
-- All symlinks are relative, so the repository can be moved without breaking links
+3. Rebuild.
