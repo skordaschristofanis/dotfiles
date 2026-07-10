@@ -20,8 +20,8 @@ Configs in `config/` are symlinked into `~/.config/` by home-manager. Each host 
 ### Clone with submodules
 
 ```bash
-git clone --recurse-submodules git@github.com:skordaschristofanis/dotfiles.git ~/repos/dotfiles
-cd ~/repos/dotfiles
+git clone --recurse-submodules git@github.com:skordaschristofanis/dotfiles.git
+cd dotfiles
 ```
 
 If already cloned without submodules:
@@ -42,17 +42,17 @@ cp secrets/vortex.nix.example ~/.secrets/nix/vortex.nix     # macOS (work)
 
 Only the `.example` templates in `secrets/` are committed. `nix flake check --impure` is required so Nix can read secrets from your home directory.
 
-### NixOS (hellios)
+### NixOS
 
 1. Create secrets (see above).
 
 2. Verify and apply:
    ```bash
    nix flake check --impure
-   sudo nixos-rebuild switch --flake ~/repos/dotfiles#hellios
+   sudo nixos-rebuild switch --flake /repos/dotfiles#hellios --impure
    ```
 
-### macOS (vortex)
+### macOS
 
 1. Create secrets (see above).
 

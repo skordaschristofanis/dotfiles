@@ -1,15 +1,19 @@
-{ hostName }:
+{ hostName, system }:
 let
   fromEnv = builtins.getEnv "DOTFILES_SECRETS";
   sudoUser = builtins.getEnv "SUDO_USER";
   homeEnv = builtins.getEnv "HOME";
   user = builtins.getEnv "USER";
 
+  isDarwin = builtins.match ".*-darwin" system != null;
+
+  userHome = username:
+    if isDarwin then "/Users/${username}" else "/home/${username}";
+
   home =
-    if homeEnv != "" then homeEnv
-    else if sudoUser != "" then "/home/${sudoUser}"
-    else if user != "" && user != "root" then
-      if hostName == "vortex" then "/Users/${user}" else "/home/${user}"
+    if sudoUser != "" then userHome sudoUser
+    else if homeEnv != "" && homeEnv != "/root" then homeEnv
+    else if user != "" && user != "root" then userHome user
     else null;
 
   secretPath =
@@ -20,7 +24,7 @@ in
 if secretPath == null then
   builtins.throw ''
     Cannot locate secrets for host ${hostName}.
-    Set HOME or run via sudo as a normal user, or set DOTFILES_SECRETS.
+    Run with --impure, set DOTFILES_SECRETS, or run via sudo as a normal user.
   ''
 else if builtins.pathExists secretPath
 then import secretPath

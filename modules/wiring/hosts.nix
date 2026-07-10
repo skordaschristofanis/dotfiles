@@ -4,7 +4,7 @@ let
 
   mkNixos = { system, hostName, hostPath }:
     let
-      secrets = loadSecrets { inherit hostName; };
+      secrets = loadSecrets { inherit hostName system; };
       dotfiles = self;
     in
     inputs.nixpkgs.lib.nixosSystem {
@@ -25,7 +25,8 @@ let
 
   mkDarwin = { hostName, hostPath }:
     let
-      secrets = loadSecrets { inherit hostName; };
+      system = "aarch64-darwin";
+      secrets = loadSecrets { inherit hostName system; };
       dotfiles = self;
     in
     inputs.nix-darwin.lib.darwinSystem {
