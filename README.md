@@ -1,84 +1,93 @@
 # Dotfiles
 
-This repository contains my personal dotfiles configuration. All configuration folders are symlinked into `~/.config/` for easy management and version control.
+Personal system configuration managed with Nix flakes (NixOS + nix-darwin) and home-manager.
 
 ## Structure
 
-Each folder in this repository represents a configuration directory that will be symlinked into `~/.config/`. For example:
+```
+dotfiles/
+├── config/              # App configs (git submodules), linked via home-manager
+│   └── nvim/            # → ~/.config/nvim
+├── hosts/               # Per-machine settings (modules, hardware)
+├── modules/             # Shared NixOS/darwin/home-manager modules
+└── secrets/             # Example templates for ~/.secrets/nix/
+```
 
-- `waybar/` → `~/.config/waybar`
-- `hyprland/` → `~/.config/hyprland`
-- `nvim/` → `~/.config/nvim`
+Configs in `config/` are symlinked into `~/.config/` by home-manager (`config/nvim` → `~/.config/nvim`). Each host profile (`modules/home-modules/<host>.nix`) chooses which configs to link.
 
 ## Setup
 
-### Initial Setup
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/skordaschristofanis/dotfiles.git ~/repos/dotfiles
-   cd ~/repos/dotfiles
-   ```
-
-2. Run the linking script:
-   ```bash
-   ./link-dotfiles.sh
-   ```
-
-### Adding New Configurations
-
-Simply add a new folder to this repository and run the linking script again:
+### Clone with submodules
 
 ```bash
-mkdir myapp
-# Add your configuration files to myapp/
-./link-dotfiles.sh
+git clone --recurse-submodules git@github.com:skordaschristofanis/dotfiles.git
+cd dotfiles
 ```
 
-The script will automatically detect and link the new folder to `~/.config/myapp`.
+If already cloned without submodules:
 
-## Usage
-
-### Basic Linking
-
-Link all folders (skips existing files/links):
 ```bash
-./link-dotfiles.sh
+git submodule update --init --recursive
 ```
 
-### Options
+### Secrets
 
-- **Force overwrite**: Overwrite existing files or symlinks
-  ```bash
-  ./link-dotfiles.sh --force
-  ```
+Each host has a secrets file at `~/.secrets/nix/<hostname>.nix` (outside the repo) for **identity** — username, git name/email, and SSH key paths. Which apps/modules are enabled live in each host file under `hosts/`.
 
-- **Backup existing**: Backup existing files before linking
-  ```bash
-  ./link-dotfiles.sh --backup
-  ```
+```bash
+mkdir -p ~/.secrets/nix
+cp secrets/hellios.nix.example ~/.secrets/nix/hellios.nix   # NixOS (home)
+cp secrets/vortex.nix.example ~/.secrets/nix/vortex.nix     # macOS (work)
 
-- **Verbose output**: Show detailed information about each operation
-  ```bash
-  ./link-dotfiles.sh --verbose
-  ```
+# optional: system-wide symlink so sudo rebuilds find secrets reliably
+sudo mkdir -p /etc/nix-secrets
+sudo ln -sf ~/.secrets/nix/hellios.nix /etc/nix-secrets/hellios.nix
+```
 
-- **Help**: Show usage information
-  ```bash
-  ./link-dotfiles.sh --help
-  ```
+Only the `.example` templates in `secrets/` are committed. Secrets and config submodules live outside the nix store, so always pass `--impure` to `nixos-rebuild` and `nix flake check`.
 
-## How It Works
+### NixOS
 
-The `link-dotfiles.sh` script:
+1. Create secrets (see above).
 
-1. Scans the repository for all directories
-2. Skips hidden directories (starting with `.`)
-3. Creates symlinks from `~/.config/<folder>` to the repository folders
-4. Handles existing files/links based on the options provided
+2. Verify and apply:
+   ```bash
+   nix flake check --impure
+   sudo nixos-rebuild switch --flake /repos/dotfiles#hellios --impure
+   ```
 
-## Notes
+### macOS
 
-- Hidden directories (starting with `.`) are automatically skipped
-- The script will not overwrite existing files unless you use `--force` or `--backup`
-- All symlinks are relative, so the repository can be moved without breaking links
+1. Create secrets (see above).
+
+2. Install Nix and apply (use `sudo -H` if needed):
+   ```bash
+   curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+   nix flake check --impure ~/Repos/dotfiles
+   nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ~/Repos/dotfiles#vortex
+   ```
+
+   On subsequent rebuilds, `darwin-rebuild switch --flake ~/Repos/dotfiles#vortex` works once nix-darwin is installed.
+
+## Adding a config
+
+1. Add a submodule (or directory) under `config/`:
+   ```bash
+   git submodule add git@github.com:you/repo.git config/myapp
+   ```
+
+2. Set `host.dotfilesPath` in the host file and link configs in the home profile:
+   ```nix
+   # hosts/nixos/hellios/default.nix
+   host.dotfilesPath = "/repos/dotfiles";
+
+   # modules/home-modules/hellios.nix
+   (import ./lib/link-configs.nix {
+     inherit dotfilesPath;
+     configs = [ "nvim" "myapp" ];
+   })
+   ```
+
+   Uses `home.file` with `mkOutOfStoreSymlink` so git submodules work (they are not in the nix store).
+
+3. Rebuild.
