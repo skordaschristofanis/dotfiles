@@ -8,7 +8,7 @@ in
 
     options.modules.base = {
         enable = lib.mkEnableOption "base darwin configuration" // {
-            default = true;
+            default = false;
     };
     };
 

@@ -7,7 +7,7 @@ in
 
     options.modules.determinate = {
         enable = lib.mkEnableOption "Determinate Nix integration for Darwin" // {
-            default = true;
+            default = false;
     };
     };
 

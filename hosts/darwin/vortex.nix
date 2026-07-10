@@ -1,8 +1,13 @@
-# Vortex - MBP M3 Pro
-{ inputs, pkgs, ... }:
+# Vortex - MBP M3 Pro (work)
+{ config, ... }:
 
 {
-    system.primaryUser = builtins.getEnv "USER";
-    system.stateVersion = 7;
-    environment.darwinConfig = "$HOME/Repos/dotfiles/hosts/darwin/vortex.nix";
+  host.username = "chris";
+
+  system.primaryUser = config.host.username;
+  system.stateVersion = 7;
+  environment.darwinConfig = "/Users/${config.host.username}/Repos/dotfiles/hosts/darwin/vortex.nix";
+
+  modules.base.enable = true;
+  modules.determinate.enable = true;
 }
