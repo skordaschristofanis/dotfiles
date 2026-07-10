@@ -22,6 +22,7 @@
 
     casks = [
       "firefox"
+      "windows-app"
     ];
 
     masApps = {
