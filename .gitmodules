@@ -1,6 +1,0 @@
-[submodule "dwm"]
-	path = dwm
-	url = https://github.com/skordaschristofanis/dwm.git
-[submodule "nvim"]
-	path = nvim
-	url = https://github.com/skordaschristofanis/nvim.git
