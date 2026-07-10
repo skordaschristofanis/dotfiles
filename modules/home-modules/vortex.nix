@@ -9,4 +9,14 @@
       configs = [ "nvim" ];
     })
   ];
+
+  programs.zsh = {
+      enable = true;
+      shellAliases = {
+          sudo = "sudo -E";
+          vim = "nvim";
+          cat = "bat";
+          nix-rebuild = "sudo -H nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ~/Repos/dotfiles#vortex --impure";
+      };
+  };
 }

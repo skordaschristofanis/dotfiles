@@ -9,4 +9,14 @@
       configs = [ "nvim" ];
     })
   ];
+
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      sudo = "sudo -E";
+      vim = "nvim";
+      cat = "bat";
+      nix-rebuild = "sudo nixos-rebuild switch --flake /repos/dotfiles#hellios --impure";
+    };
+  };
 }

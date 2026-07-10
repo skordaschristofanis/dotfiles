@@ -35,12 +35,7 @@ in
     nixpkgs.config.allowUnfree = true;
 
     environment.systemPackages = with pkgs; [
-      vim
-      wget
       code-cursor
-      neovim
-      ripgrep
-      bat
       protonplus
       alacritty
       waybar

@@ -6,14 +6,14 @@
   home.homeDirectory = host.homeDirectory;
   home.stateVersion = "26.05";
   services.ssh-agent.enable = true;
-  programs.bash = {
-    enable = true;
-    shellAliases = {
-      sudo = "sudo ";
-      vim = "nvim";
-      cat = "bat";
-    };
-  };
+
+  home.packages = [
+    pkgs.bat
+    pkgs.ripgrep
+    pkgs.neovim
+    pkgs.tree
+    pkgs.wget
+  ];
 
   programs.git = {
     enable = true;
