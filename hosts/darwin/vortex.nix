@@ -12,17 +12,18 @@
   modules.determinate.enable = true;
   modules.home-manager.enable = true;
 
-    modules.homebrew = {
+  modules.homebrew = {
     enable = true;
 
     brews = [
-      "wget"
-      "ripgrep"
     ];
 
     casks = [
-      "firefox"
-      "windows-app"
+        "1password"
+        "1password-cli"
+        "adobe-creative-cloud"
+        "microsoft-office"
+        "windows-app"
     ];
 
     masApps = {
