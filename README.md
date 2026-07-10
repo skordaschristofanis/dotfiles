@@ -38,9 +38,13 @@ Each host has a secrets file at `~/.secrets/nix/<hostname>.nix` (outside the rep
 mkdir -p ~/.secrets/nix
 cp secrets/hellios.nix.example ~/.secrets/nix/hellios.nix   # NixOS (home)
 cp secrets/vortex.nix.example ~/.secrets/nix/vortex.nix     # macOS (work)
+
+# optional: system-wide symlink so sudo rebuilds find secrets reliably
+sudo mkdir -p /etc/nix-secrets
+sudo ln -sf ~/.secrets/nix/hellios.nix /etc/nix-secrets/hellios.nix
 ```
 
-Only the `.example` templates in `secrets/` are committed. `nix flake check --impure` is required so Nix can read secrets from your home directory.
+Only the `.example` templates in `secrets/` are committed. Secrets and config submodules live outside the nix store, so always pass `--impure` to `nixos-rebuild` and `nix flake check`.
 
 ### NixOS
 
@@ -72,12 +76,18 @@ Only the `.example` templates in `secrets/` are committed. `nix flake check --im
    git submodule add git@github.com:you/repo.git config/myapp
    ```
 
-2. Link it in the relevant home profile (`modules/home-modules/hellios.nix`, etc.):
+2. Set `host.dotfilesPath` in the host file and link configs in the home profile:
    ```nix
+   # hosts/nixos/hellios/default.nix
+   host.dotfilesPath = "/repos/dotfiles";
+
+   # modules/home-modules/hellios.nix
    (import ./lib/link-configs.nix {
-     inherit dotfiles;
+     inherit dotfilesPath;
      configs = [ "nvim" "myapp" ];
    })
    ```
+
+   Uses `home.file` with `mkOutOfStoreSymlink` so git submodules work (they are not in the nix store).
 
 3. Rebuild.

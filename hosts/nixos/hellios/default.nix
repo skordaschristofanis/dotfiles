@@ -7,6 +7,8 @@
   networking.hostName = "hellios";
   system.stateVersion = "26.05";
 
+  host.dotfilesPath = "/repos/dotfiles";
+
   modules.base.enable = true;
   modules.desktop.enable = true;
   modules.gaming.enable = true;

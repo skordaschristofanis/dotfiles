@@ -10,25 +10,21 @@ let
   userHome = username:
     if isDarwin then "/Users/${username}" else "/home/${username}";
 
-  home =
-    if sudoUser != "" then userHome sudoUser
-    else if homeEnv != "" && homeEnv != "/root" then homeEnv
-    else if user != "" && user != "root" then userHome user
-    else null;
+  candidates =
+    (if fromEnv != "" then [ "${fromEnv}/${hostName}.nix" ] else [ ])
+    ++ [ "/etc/nix-secrets/${hostName}.nix" ]
+    ++ (if sudoUser != "" then [ "${userHome sudoUser}/.secrets/nix/${hostName}.nix" ] else [ ])
+    ++ (if homeEnv != "" && homeEnv != "/root" then [ "${homeEnv}/.secrets/nix/${hostName}.nix" ] else [ ])
+    ++ (if user != "" && user != "root" then [ "${userHome user}/.secrets/nix/${hostName}.nix" ] else [ ]);
 
-  secretPath =
-    if fromEnv != "" then "${fromEnv}/${hostName}.nix"
-    else if home != null then "${home}/.secrets/nix/${hostName}.nix"
-    else null;
+  matches = builtins.filter builtins.pathExists candidates;
+  secretPath = if matches == [ ] then null else builtins.head matches;
 in
-if secretPath == null then
+if secretPath == null || secretPath == "" then
   builtins.throw ''
     Cannot locate secrets for host ${hostName}.
-    Run with --impure, set DOTFILES_SECRETS, or run via sudo as a normal user.
+    Create ~/.secrets/nix/${hostName}.nix or /etc/nix-secrets/${hostName}.nix
+    and run nixos-rebuild with --impure (required for the first rebuild).
   ''
-else if builtins.pathExists secretPath
-then import secretPath
-else builtins.throw ''
-  Missing secrets file: ${secretPath}
-  Copy secrets/${hostName}.nix.example to that path and fill in your values.
-''
+else
+  import secretPath
