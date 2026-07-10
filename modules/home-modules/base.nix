@@ -7,12 +7,14 @@
   home.stateVersion = "26.05";
   services.ssh-agent.enable = true;
 
-  home.packages = [
-    pkgs.bat
-    pkgs.ripgrep
-    pkgs.neovim
-    pkgs.tree
-    pkgs.wget
+  home.packages = with pkgs; [
+    bat
+    eza
+    git
+    neovim
+    ripgrep
+    tree
+    wget
   ];
 
   programs.git = {
