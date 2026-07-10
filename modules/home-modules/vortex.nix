@@ -2,7 +2,11 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ (import ./base.nix { inherit secrets host; }) ];
-
-  # Work machine extras
+  imports = [
+    (import ./base.nix { inherit secrets host; })
+    (import ./lib/link-configs.nix {
+      inherit dotfilesPath;
+      configs = [ "nvim" ];
+    })
+  ];
 }

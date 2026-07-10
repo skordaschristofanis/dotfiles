@@ -62,6 +62,7 @@ in
     darwinModules = {
       base = import ../darwin-modules/base.nix;
       determinate = import ../darwin-modules/determinate.nix;
+      home-manager = import ../darwin-modules/home-manager.nix;
     };
 
     nixosConfigurations = {

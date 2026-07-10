@@ -6,6 +6,10 @@
   system.stateVersion = 7;
   environment.darwinConfig = "/Users/${secrets.username}/Repos/dotfiles/hosts/darwin/vortex.nix";
 
+  host.dotfilesPath = "/Users/${secrets.username}/Repos/dotfiles";
+
   modules.base.enable = true;
   modules.determinate.enable = true;
+  modules.home-manager.enable = true;
 }
+
