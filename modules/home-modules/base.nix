@@ -14,6 +14,7 @@
     neovim
     ripgrep
     tree
+    uv
     wget
   ];
 
