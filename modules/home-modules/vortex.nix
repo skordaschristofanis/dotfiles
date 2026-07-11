@@ -16,16 +16,9 @@
     proton-vpn
   ];
 
-  programs.zsh = {
-      enable = true;
-      shellAliases = {
-          cat = "bat";
-          ll = "eza -lah --group-directories-first --sort=name";
-          ls = "eza";
-          nix-rebuild = "sudo -H nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ~/Repos/dotfiles#vortex --impure";
-          sudo = "sudo -E";
-          tree = "tree -C";
-          vim = "nvim";
-      };
+  _dotfiles.shell.hostAliases = {
+    nix-rebuild = "sudo -H nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ${dotfilesPath}#vortex --impure";
   };
+
+  programs.zsh.enable = true;
 }

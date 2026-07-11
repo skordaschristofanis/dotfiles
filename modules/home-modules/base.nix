@@ -2,6 +2,8 @@
 { config, pkgs, ... }:
 
 {
+  imports = [ ./lib/shell.nix ];
+
   home.username = host.username;
   home.homeDirectory = host.homeDirectory;
   home.stateVersion = "26.05";
