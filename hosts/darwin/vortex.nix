@@ -23,7 +23,9 @@
         "1password-cli"
         "adobe-creative-cloud"
         "microsoft-office"
+        "miniconda"
         "windows-app"
+        "zoom"
     ];
 
     masApps = {
