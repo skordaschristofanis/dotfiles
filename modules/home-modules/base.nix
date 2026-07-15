@@ -13,6 +13,7 @@
     git
     neovim
     ripgrep
+    tmux
     tree
     uv
     wget
