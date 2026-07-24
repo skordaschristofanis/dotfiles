@@ -14,6 +14,7 @@
     claude-code
     firefox
     proton-vpn
+    zed-editor
   ];
 
   programs.zsh = {
