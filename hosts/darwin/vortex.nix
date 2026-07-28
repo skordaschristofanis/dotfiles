@@ -34,5 +34,15 @@
     masApps = {
     };
   };
+
+  system.activationScripts.calendarDelegateReminder.text = ''
+    echo ""
+    echo "REMINDER: Calendar delegate accounts must be added manually."
+    echo "  Calendar → Settings → Accounts → <your Exchange account> → Delegation → +"
+    echo ""
+    echo "  Delegate accounts:"
+    ${builtins.concatStringsSep "\n" (map (a: "  echo \"    ${a}\"") secrets.calendar.delegateAccounts)}
+    echo ""
+  '';
 }
 
