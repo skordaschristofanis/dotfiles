@@ -12,6 +12,7 @@
     eza
     git
     neovim
+    python3
     ripgrep
     tmux
     tree
