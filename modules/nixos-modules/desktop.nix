@@ -32,6 +32,7 @@ in
     };
 
     services.xserver.videoDrivers = [ "amdgpu" ];
+    hardware.amdgpu.opencl.enable = true;
 
     xdg.portal.enable = true;
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];

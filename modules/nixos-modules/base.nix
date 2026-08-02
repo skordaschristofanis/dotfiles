@@ -36,6 +36,7 @@ in
 
     environment.systemPackages = with pkgs; [
       code-cursor
+      clinfo
       protonplus
       alacritty
       waybar
