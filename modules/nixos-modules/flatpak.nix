@@ -16,6 +16,7 @@ in
       enable = true;
       packages = [
         "com.discordapp.Discord"
+        "com.makemkv.MakeMKV"
       ];
     };
   };

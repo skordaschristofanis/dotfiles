@@ -12,7 +12,6 @@
 
   home.packages = with pkgs; [
     zed-editor
-    makemkv
   ];
 
   programs.bash = {
