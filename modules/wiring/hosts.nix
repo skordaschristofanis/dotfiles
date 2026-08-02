@@ -56,6 +56,7 @@ in
       desktop = import ../nixos-modules/desktop.nix;
       gaming = import ../nixos-modules/gaming.nix;
       flatpak = import ../nixos-modules/flatpak.nix;
+      shares = import ../nixos-modules/shares.nix;
       home-manager = import ../nixos-modules/home-manager.nix;
     };
 

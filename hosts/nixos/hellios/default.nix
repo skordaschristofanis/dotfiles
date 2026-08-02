@@ -13,5 +13,6 @@
   modules.desktop.enable = true;
   modules.gaming.enable = true;
   modules.flatpak.enable = true;
+  modules.shares.enable = true;
   modules.home-manager.enable = true;
 }
