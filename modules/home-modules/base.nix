@@ -13,6 +13,7 @@
     git
     neovim
     python3
+    remmina
     ripgrep
     tmux
     tree
