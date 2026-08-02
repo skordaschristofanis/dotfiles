@@ -84,6 +84,15 @@ in
           lib.mapAttrsToList (key: _: "/${mountName}/${key}") entries
         ) mounts
       );
+
+      # Same role as RHEL /usr/local/bin/mount_autofs_shares — cd into each map
+      # key so autofs keeps the shares mounted. Regenerated from secrets.smb.mounts.
+      mountAutofsShares = pkgs.writeShellScriptBin "mount-autofs-shares" ''
+        set -euo pipefail
+        for dir in ${lib.escapeShellArgs touchPaths}; do
+          cd "$dir" >/dev/null 2>&1 || true
+        done
+      '';
     in
     {
       assertions = [
@@ -103,6 +112,7 @@ in
       environment.systemPackages = with pkgs; [
         cifs-utils
         nfs-utils
+        mountAutofsShares
       ];
 
       boot.supportedFilesystems = {
@@ -126,12 +136,14 @@ in
         pkgs.coreutils
       ];
 
+      # RHEL used @reboot + */5 cron; this is the same on a systemd timer.
       systemd.timers.touch-autofs-shares = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
-          OnBootSec = "1min";
+          OnBootSec = "30s";
           OnUnitActiveSec = "5min";
           AccuracySec = "1min";
+          Unit = "touch-autofs-shares.service";
         };
       };
 
@@ -139,10 +151,10 @@ in
         description = "Touch autofs mount points so shares stay mounted";
         after = [ "autofs.service" "network-online.target" ];
         wants = [ "network-online.target" ];
-        serviceConfig.Type = "oneshot";
-        script = lib.concatMapStringsSep "\n" (d: ''
-          cd "${d}" >/dev/null 2>&1 || true
-        '') touchPaths;
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${mountAutofsShares}/bin/mount-autofs-shares";
+        };
       };
     }
   );
