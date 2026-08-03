@@ -17,6 +17,7 @@ in
       packages = [
         "com.discordapp.Discord"
         "com.makemkv.MakeMKV"
+        "org.kde.dragonplayer"
       ];
     };
   };
