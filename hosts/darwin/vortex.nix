@@ -24,6 +24,7 @@
         "adobe-creative-cloud"
         "cursor"
         "cursor-cli"
+        "github"
         "microsoft-office"
         "microsoft-teams"
         "miniconda"
