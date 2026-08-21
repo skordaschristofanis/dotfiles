@@ -25,6 +25,7 @@
         "cursor"
         "cursor-cli"
         "github"
+        "grammarly-desktop"
         "microsoft-office"
         "microsoft-teams"
         "miniconda"
