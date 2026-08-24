@@ -25,7 +25,7 @@
           ls = "eza";
           nix-rebuild = "sudo -H nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake ~/Repos/dotfiles#vortex --impure";
           sudo = "sudo -E";
-          tm = "tmux new-session -A -s dev"
+          tm = "tmux new-session -A -s dev";
           tree = "tree -C";
           vim = "nvim";
       };
